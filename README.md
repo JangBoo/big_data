@@ -19,7 +19,7 @@ The dataset is composed of 35,000 data, pulled from [Kaggle](https://www.kaggle.
 
 Example of Row:
 
-
+![example-data](assets/data-example.png)
 
 
 
