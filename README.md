@@ -22,12 +22,13 @@ Example of Row:
 ![example-data](assets/data-example.png)
 
 
-
+#### Sentiment Analysis
 For sentiment analysis, we will mostly be interested in features: review.text and review.date, review.rating. The first step is to analyze review.text to prepare for pre processing and feature engineering. Given review.text is text data, we need to recognize what information (words) included in this text is useful for NLP approaches and what is not. After extracting useful information from the review.text, we apply some feature engineering on reviews.rating and review.date to create more valuable features. We apply simple linear regression to the dataset  and then by calculating least square error we figured that we have a linear data set.  As a result of that we consider applying multiple Machine Learning and Neural Network algorithms on our dataset.
 
 
 Mostly we are going to work on the review column and apply some text preprocessing to clean the data. We assume that data requires lots of preprocessing since the reviews are written by users and they include lots of unnecessary stopwords and parts of speech which are not useful for feeding into text classification models. The reviews are multilingual, we will focus on English reviews, and therefore implement some filtering with respect to the language used. Since the data is text, we also need to do some vectorization to convert it to numeric data to be able to use it for training models. Also, the data set is unlabeled so we need to do some feature engineering to create labels for example by using the rating column. 
 
+#### Recommender System
 For the recommender system, because we want to try all the different approaches such as democratic and collaborative filtering, and content based filtering. 
 Content-based filtering will recommend a similar hotel based on a particular review. The idea behind this system is that if a person liked a hotel and gave a positive review, they will also like a hotel with a similar review.We will calculate pairwise similarity scores for all hotels based on their reviews and recommend hotels based on that similarity score. We will use Term Frequency-Inverse Document Frequency to transform the reviews into vectors.
 Demographic filtering gives  a  generalized  recommenda-tions to every user,  based on popularity of the hotel. We will need a metric to calculate the score for each hotel, then we sort  hotels based on their scores and return the best rated ones as the recommendation. We will use the IMDb’s rating system formula to calculate the score for each hotel.
