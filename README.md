@@ -1,4 +1,4 @@
-
+https://colab.research.google.com/drive/1NLTTTkGXKRbnZRTvtEehd_xyAXn2GkiI?usp=sharing
 ### Abstract 
 
 *Sentiment analysis, the extraction of underlying meaning of reviews of positive and negative is becoming one of the most attractive tools for researchers and businesses to group customer feedback and better determine their desires and needs. Recommender systems are also becoming more and more important in the marketing industry, to streamline targeted advertising. Natural language processing, machine learning and neural network approaches on large volumes of text, make it possible to extract sentiment analysis and build recommender systems. In this project we will build these two tools based on European hotel reviews.*
