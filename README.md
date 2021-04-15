@@ -34,72 +34,163 @@ For the recommender system, because we want to try all the different approaches 
 Content-based filtering will recommend a similar hotel based on a particular review. The idea behind this system is that if a person liked a hotel and gave a positive review, they will also like a hotel with a similar review.We will calculate pairwise similarity scores for all hotels based on their reviews and recommend hotels based on that similarity score. We will use Term Frequency-Inverse Document Frequency to transform the reviews into vectors.
 Demographic filtering gives  a  generalized  recommenda-tions to every user,  based on popularity of the hotel. We will need a metric to calculate the score for each hotel, then we sort  hotels based on their scores and return the best rated ones as the recommendation. We will use the IMDb’s rating system formula to calculate the score for each hotel.
 
-### NLP Pre-processing
-Data is a multi-language data and I only keep the English reviews. After removing NaN values and doing some normalization I applied the following steps to get a clean data, which is ready for use in the algorithms:
 
-For embedding I used Count Vectorizer on bad of words mode, in this method text data is been converted to a to a matrix of token counts.
+#### Methodology & Experimental Results
+
+### Sentimental Analysis
+For Sentimental Analysis, we mostly use the following features reviews.text and reviews.date, reviews.rating. 
+The first step is analyzing reviews.text which are text data and as a result we need to recognize what is useful and what is not with using NLP approaches. After extracting useful information from the reviews.text, we apply some feature engineering on reviews.rating and reviews.date to create more valuable features.
+We apply simple linear regression to the dataset and then by calculating least square error we figured that we have a linear data set. As a result of that we consider applying multiple Machine Learning and Neural Network algorithms on our dataset.
+
+### NLP Pre-processing
+
+Our data is a multi-language data and we only keep the English reviews. 
+
+![originalReview](assets/originalReview.png)
+
+After removing NaN values and doing some normalization we applied the following steps to get a clean data, which is ready for use in the algorithms:
+
+![nlpProcess](assets/nlpProcess.png)
+
+For embedding we used Count Vectorizer on our bad of words mode, in this method 
+our text data is been converted to a to a matrix of token counts. 
+
 The sample data after pre-processing is:
 
-Challenges that I face include Slang, sarcasm, culture and multi-languages. Some words can have positive values but when they combine with other words the underlying meaning changes. Also, by removing the non English reviews I lost some information. As a substitution I could use Python translation library. Since, translation in this way might not convert the exact meaning, it is possible that I don't get accurate result.
+![preprocessedReview](assets/preprocessedReview.png)
+Same review after pre-processing
 
-For purpose of creating a Sentimental tool I need a 0-1 label for each review. I use the reviews.rating column and create a new feature names "feedback" with the following values
-I have a categorical column "name" and I change it to binary variables with use of dummy variables and then concatenate the results. This step is necessary because I can not use categorical features in the algorithms.
-Now, I have a dataframe with numeric labeled data which is ready to be fit in the algorithms.
-Also, I use reviews.date to extract month, year and day to use in recommendation tool and data exploration.
-After preparing the data, I did a bit of data visualization to understand data more and to see which features are more useful for targets.
-The following bar chart shows the number of reviews per months, and I can see the number of reviews are higher in the summer. I consider using month as a feature to be used in the recommendation system.
+Challenges that we face include Slang, sarcasm, culture and multi-languages.
+Some words can have positive values but when they combine with other words the underlying meaning changes. 
+Also, by removing the non English reviews we lost some information. As a substitution we could use Python translation library. Since, translation in this way might not convert the exact meaning, it is possible that we don't get accurate result. 
 
-I also extracted the most frequent keywords and illustrate them with word cloud to see what exactly I gain. Following images shows that the most repetitive words are hotel, stayed and night which are not really useful for purpose also has effect on the tf-idf score.
+### Feature Engineering
 
-I decide to use NLP POS Tags to keep the adjectives in order to avoid the non necessary repetitive words.
-Another approach that I try is creating bi-grams from the pre-processed data to see if the combination of words make more sense to use in the algorithms.
+We limited our data set to name, reviews.rating, reviews.text and reviews.preprocessed.
+The reviews.rating is a feature that users give a rate to a hotel between 1-5. The distribution of this rating is as follows:
+![ratingDistribution](assets/ratingDistribution.png)
+Reviews rating distribution.
+
+For our purpose of creating a Sentimental tool we need a 0-1 label for each review. We use the reviews.rating column and create a new feature names "feedback" with the following values:\\
+ if the reviews.rating \< 3
+ if the reviews.rating == 5
+
+![TSNE](assets/TSNE.png)
+T-SNE distribution of positive and negative reviews
+
+We have a categorical column "name" and we change it to binary variables with use of dummy variables and then concatenate the results. This step is necessary because we can not use categorical features in the algorithms.
+
+Now, we have a dataframe with numeric labeled data which is ready to be fit in the algorithms. 
+
+Also, we use reviews.date to extract month, year and day to use in our recommendation tool and data exploration.
+
+### Data Exploration
+After preparing the data, we did a bit of data visualization to understand our data more and to see which features are more useful for our targets. 
+The following bar chart shows the number of reviews per months, and we can see the number of reviews are higher in the summer. We consider using month as a feature to be used in the recommendation system. 
+
+![monthAnalysis](assets/monthAnalysis.png)
+Number of reviews per months.
+
+
+We also extracted the most frequent keywords and illustrate them with word cloud to see what exactly we gain. Following images shows that the most repetitive words are hotel, stayed and night which are not really useful for our purpose also has effect on the tf-idf score. 
+
+![wordCloud](assets/wordCloud.png)
+Most frequent words
+
+We decide to use NLP POS Tags to keep the adjectives in order to avoid the non necessary repetitive words.
+
+Another approach that we try is creating bi-grams from the pre-processed data to see if the combination of words make more sense to use in the algorithms. 
+
+![bigrams](assets/bigrams.png)
+Bi-grams for positive, negative and neutral reviews.
+
 
 ### Neural Network Classification Algorithms
-I use Keras and Tensorflow libraries and experimented with ANN, CNN, RNN approaches.
-ANN is a group of multiple perceptron at each layer and known as Feed-Forward Neural network. I made two different versions of ANN model with 2 hidden layers with 400 unites with relu activation function. But I differentiate ANN versions by using different activation function on output later so that one can output the Positive/Negative segmentation from sigmoid and the other can output the 1-5 Score of positiveness from softmax.
-ANN cannot capture sequential information in the input data which is needed in most of NLP so I decided to experiment with CNN, RNN.
-RNN is made by looping constraint on the hidden layer of ANN. This looping constraint ensure that sequential information is capture in the input data because the output at each step depends not only on the current word but also on the previous words. I imported LSDM from Keras and inserted 2 layers with 128 Unites, 64 unites each at first. However, due to limited computing power, I experienced that RNN takes a lot of resces and it crashed at first. So I had to reduced the size of unites to 32 and 16 each and it resulted with poor performance.
+We use Keras and Tensorflow libraries and experimented with ANN, CNN, RNN approaches. 
+
+ANN is a group of multiple perceptron at each layer and known as Feed-Forward Neural network. We made two different versions of ANN model with 2 hidden layers with 400 unites with relu activation function. But we differentiate ANN versions by using different activation function on output later so that one can output the Positive/Negative segmentation from sigmoid and the other can output the 1-5 Score of positiveness from softmax. 
+ANN cannot capture sequential information in the input data which is needed in most of NLP so we decided to experiment with CNN, RNN.
+
+RNN is made by looping constraint on the hidden layer of ANN. This looping constraint ensure that sequential information is capture in the input data because the output at each step depends not only on the current word but also on the previous words. We imported LSDM from Keras and inserted 2 layers with 128 Unites, 64 unites each at first. However, due to our limited computing power, we experienced that RNN takes a lot of resources and it crashed at first. So we had to reduced the size of unites to 32 and 16 each and it resulted with poor performance.
+
 CNN are sliding window function(filter) that summarize its feature by multiplying its value with the matrix. Then, it can extract relevant information and applies this matrix especially to a image. But how about the text?
+Images are points in space, just like the word vectors are. By embedding/vectorizing each words on top of each other, we can get an image from text. And we applied the matrix over word embedding and went through Max Pooling to form a single feature vector which reduced dimensionality. We also experienced hardware limitation. But, it performed much better than RNN given the same amount of training time.
 
-Images are points in space, just like the word vectors are. By embedding/vectorizing each words on top of each other, I can get an image from text. And I applied the matrix over word embedding and went through Max Pooling to form a single feature vector which reduced dimensionality. I also experienced hardware limitation. But, it performed much better than RNN given the same amount of training time.
-Machine Learning Classification Algorithms
-I fit data into following estimators:
 
-For this aim I use scikit-learn library to separate train and test data with the 80-20 rule and I define models of each estimator, fit the data and calculate the scores. Based on experiment, I get the hight score for SVM linear kernel.
-I experimented with different types of SVM kernel such as linear, poly, rbf. I expected that polynomial or rbf would give better performance as I initially believe that it require higher dimensional space to linearly separate the data. So How should I select SVM kernels? In order to distinguish if data is linear or nonlinear, I made a Linear Regression model. The idea is to apply simple linear regression to the dataset and then to check least square error. If the least square error shows high accuracy, it implies the dataset being linear in nature, else dataset is non-linear. With this experiment, high score appeared with Linear Regression and I could confidently select Linear Kernel on SVM model.
+### Machine Learning Classification Algorithms
+
+We fit our data into following estimators: 
+
+  item Gaussian Naive Bayes  
+  item Random Forest
+  item SVM linear and rbf kernel
+
+ For this aim We use scikit-learn library to separate train and test data with the 80-20 rule and we define models of each estimator, fit the data and calculate the scores. Based on our experiment, we get the hight score for SVM linear kernel. 
+ 
+We experimented with different types of SVM kernel such as linear, poly, rbf. We expected that polynomial or rbf would give better performance as we initially believe that it require higher dimensional space to linearly separate the data. So How should I select SVM kernels? In order to distinguish if our data is linear or nonlinear, We made a Linear Regression model. The idea is to apply simple linear regression to the dataset and then to check least square error. If the least square error shows high accuracy, it implies the dataset being linear in nature, else dataset is non-linear. With this experiment, high score  appeared with Linear Regression and we could confidently select Linear Kernel on our SVM model.
+
 
 ### Measures
+Among eight methods that we applied, ANN shows the best score. As we can see in the following learning curve, after 3 epochs, the loss amount dropped significantly. And at its 10th epochs, it shows 98\% of accuracy. Unless RNN and CNN model which resulted only 70\% accuracy after 6th epochs.
 
-Among eight methods that I applied, ANN shows the best score. As I can see in the following learning curve, after 3 epochs, the loss amount dropped significantly. And at its 10th epochs, it shows 98\% of accuracy. Unless RNN and CNN model which resulted only 70\% accuracy after 6th epochs.
+![ANN](assets/ANN.png)
+ANN learning curve.
 
-I expected to get better result from LMTS but due to limited GPU, the number of epoches I try is fewer than ANN, so I can not really get the result I expected.
-In the future, I want to experiment more with RNN with normalization or dimentionality reduction because it can interpreted sequantial data, it is more suitable to use it for NLP.
 
-The confusion matrix of ANN shows the positive results.
+We expected to get better result from LMTS but due to limited GPU, the number of epoches we try is fewer than ANN, so we can not really get the result we expected. 
+In the future, we want to experiment more with RNN with normalization or dimentionality reduction because it can interpreted sequantial data, it is more suitable to use it for NLP. 
+
+The confusion matrix of ANN shows the positive results. 
+
+![cmANN](assets/cmANN.png)
+ANN confusion matrix.
 
 ### Recommendation System
-For recommendation system I used two approaches: demographic filtering and content based filtering
-I could not apply Collaborative Filtering on data set, because Collaborative Filtering finds the user interest based on their history and I do not have enough information in this data set to cover this feature.
-
+For recommendation system we used two approaches: demographic filtering and content based filtering 
+We could not apply Collaborative Filtering on our data set, because Collaborative Filtering finds the user interest based on their history and we do not have enough information in this data set to cover this feature.   
 ### Demographic Filtering
-Demographic filtering gives a generalized recommendations to every user, based on popularity of the hotel.
-I need a metric to calculate the score for each hotel, then I sort hotels based on their scores and return the best rated ones as the recommendation.
-I consider to use the IMDb's rating system formula to calculate the score for each hotel
+Demographic filtering gives a generalized recommendations to every user, based on popularity of the hotel. 
+We need a metric to calculate the score for each hotel, then we sort hotels based on their scores and return the best rated ones as the recommendation. 
+We consider to use the IMDb's rating system formula to calculate the score for each hotel \textsuperscript{2}:
+\[
+\mbox{IMDb Weighted Rating} = \frac{v}{v+m} \times R + \frac{m}{v+m} \times C
+\]
+where \\
+\hspace{1cm}v: number of reivew in hotel\\
+\hspace{1cm}c: mean of all  review score\\
+\hspace{1cm}m: 4\\
 
-The following image shows sentimental score from IMBd's formula which are well calculated and matched with the true score(feedback). There are some part like in neutral that passed under 2.0, and over 4.0 but overall it is good.
+The following image shows sentimental score from IMBd's formula which are well calculated and matched with the true score(feedback). There are some part like in neutral that passed under 2.0, and over 4.0 but overall it is good. 
+
+![recomm1](assets/recomm1.png)
+sentimental score from that IMDb's formula
 
 ### Content Based Filtering
 Content-based filtering recommend the similar hotel based on a on a particular review. The idea behind this systems is that if a person liked a hotel and gave positive review, they will also like a hotel with the similar review.
-I calculate pairwise similarity scores for all hotels based on their reviews and recommend hotel based on that similarity score.
-In this section I used Term Frequency-Inverse Document Frequency to transform the reviews into vector.
-TF-IDF relative is the measure of importance of a word to the documents.
-With the TF-IDF matrix along with cosine similarity scores, I calculate the similarity between each two hotel reviews. Calculating the dot product of TF-IDF matrix give the cosine similarity score.
-The following example shows the similar hotels to the 'Ambassadors Inn and Suites' based on their similar reviews.
+We calculate pairwise similarity scores for all hotels based on their reviews and recommend hotel based on that similarity score. 
+In this section we used Term Frequency-Inverse Document Frequency  to transform the reviews into vector.
+
+TF-IDF relative is the measure of importance of a word to the documents. 
+\[ TF-IDF = TF \times IDF \] where
+\[
+TF = \frac{\mbox{Number of times a word appears in a document}}{\mbox{Total number of words in that document}}
+\]
+\[
+IDF = log \frac{\mbox{Total number of documents}}{\mbox{Number of documents with the term in it}}
+\]
+With the TF-IDF matrix along with cosine similarity scores, we calculate the similarity between each two hotel reviews. Calculating the dot product of TF-IDF matrix give the cosine similarity score. 
+The following example shows the similar hotels to the 'Ambassadors Inn and Suites' based on their similar reviews. 
+
+![recomm2](assets/recomm2.png)
+Content-based Filtering Recommendation System
 
 ### Conclusions
-In the text processing, knowing the audience and business is so important in order to understand the meaning of the words and necessity of keeping the words. Implementation of these two systems become more accurate after building classifiers training on large cleaned labeled data sets. In conclusion, the sentimental analysis system is capable of analyse a give review based on the extracted keywords and return the underlying meaning of the review. For recommendation system, it is capable to give suggestion based on defined weighted score and also reviews. Better result could be given with a more complete dataset.
 
-### Reference
-Aditya Sharma. Beginner Tutorial: Recommender Systems in Python.
-Abhishek Pawar. How does IMDB's rating system work?
-Aravind Pai: CNN vs. RNN vs. ANN – Analyzing 3 Types of Neural Networks in Deep Learning
+In the text processing, knowing the audience and business is so important in order to understand the meaning of the words and necessity of keeping the words. Implementation of these two systems become more accurate after building classifiers training on large cleaned labeled data sets. In conclusion, the sentimental analysis system is capable of analyse a give review based on the extracted keywords and return the underlying meaning of the review. For recommendation system, it is capable to give suggestion based on defined weighted score and also reviews. Better result could be given with a more complete dataset.  
+
+
+### reference
+ Aditya Sharma. Beginner Tutorial: Recommender Systems in Python.
+ Abhishek Pawar. How does IMDB's rating system work?
+
+ Aravind Pai: CNN vs. RNN vs. ANN – Analyzing 3 Types of Neural Networks in Deep Learning
